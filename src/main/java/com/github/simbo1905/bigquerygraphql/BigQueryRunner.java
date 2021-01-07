@@ -44,6 +44,11 @@ public class BigQueryRunner {
     public <T> List<T> queryAndWaitFor(final String query,
                                        Function<FieldValueList, T> mapper,
                                        Map<String, QueryParameterValue> parameterValueMap){
+
+        val logParams = logParams(parameterValueMap);
+
+        log.info("running query {} with  params: [{}]", query, logParams);
+
         // TODO test without jobId as we will fail-fast and not reattempt
         JobId jobId = JobId.of(UUID.randomUUID().toString());
         QueryJobConfiguration queryJobConfiguration = QueryJobConfiguration.newBuilder(query)
@@ -51,30 +56,33 @@ public class BigQueryRunner {
                 .setNamedParameters(parameterValueMap)
                 .build();
         queryJobConfiguration.getLabels();
-        final long startTime = System.nanoTime();
+        final long startTime = System.currentTimeMillis();
         Job job = this.bigQuery.create(JobInfo.newBuilder(queryJobConfiguration).setJobId(jobId).build());
         // block
         job = job.waitFor();
 
         // you probably want to use some other metrics/gauges to understand actual performance.
-        final long duration = (System.nanoTime() - startTime / 1000000);
+        final float duration = (System.currentTimeMillis() - startTime);
         if( duration > logThresholdMs ) {
-            val params = parameterValueMap
-                    .entrySet()
-                    .stream()
-                    .map(e->String.format("%s=%s", e.getKey(), e.getValue().toString()))
-                    .collect(Collectors.joining("|"));
-            log.warn("slow query ran in {} ms: {}, params: [{}]", duration, query, params);
+            log.warn("slow query ran in {} ms: {}, params: [{}]", Math.round(duration), query, logParams  );
         }
+
+        // map the results into the desired DTO
         final List<T> result = new ArrayList<>();
         job.getQueryResults()
                 .iterateAll()
                 .forEach(fields->{
-                    FieldValueList f = fields;
-                    f.hasSchema();
                     T t = mapper.apply(fields);
                     result.add(t);
                 });
         return result;
+    }
+
+    private String logParams(Map<String, QueryParameterValue> parameterValueMap) {
+        return parameterValueMap
+                .entrySet()
+                .stream()
+                .map(e -> String.format("%s=%s", e.getKey(), e.getValue().toString()))
+                .collect(Collectors.joining("|"));
     }
 }
