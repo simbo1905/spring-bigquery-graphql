@@ -67,7 +67,10 @@ public class BigQueryDataFetchers {
             String authorId = book.get("authorId");
             Map<String, QueryParameterValue> parameterValueMap = new LinkedHashMap<>();
             parameterValueMap.put("id", QueryParameterValue.string(authorId));
-            return bigQueryRunner.queryAndWaitFor(authorByIdQuery, authorMapper, parameterValueMap);
+            return bigQueryRunner.queryAndWaitFor(authorByIdQuery, authorMapper, parameterValueMap)
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
         };
     }
 }
