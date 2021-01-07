@@ -32,7 +32,7 @@ Now create an instance that will run the code in the bucket:
 gcloud compute instances create demo-instance \
     --image-family debian-10 \
     --image-project debian-cloud \
-    --machine-type g1-small \
+    --machine-type f1-micro \
     --scopes "userinfo-email,cloud-platform" \
     --metadata-from-file startup-script=instance-startup.sh \
     --metadata BUCKET=${BUCKET} \

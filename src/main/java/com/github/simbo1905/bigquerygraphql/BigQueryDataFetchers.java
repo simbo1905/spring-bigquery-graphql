@@ -18,10 +18,10 @@ public class BigQueryDataFetchers {
     @Autowired
     BigQueryRunner bigQueryRunner = null;
 
-    @Value("${query.bookById")
+    @Value("${query.bookById}")
     String bookByIdQuery;
 
-    @Value("${query.authorById")
+    @Value("${query.authorById}")
     String authorByIdQuery;
 
     @PostConstruct
