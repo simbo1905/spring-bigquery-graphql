@@ -19,6 +19,9 @@ import java.net.URL;
 
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 
+/**
+ * See https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/
+ */
 @Component
 public class GraphQLProvider {
 
@@ -29,6 +32,9 @@ public class GraphQLProvider {
         return graphQL;
     }
 
+    @Autowired
+    BigQueryDataFetchers bigQueryDataFetchers;
+
     @PostConstruct
     public void init() throws IOException {
         URL url = Resources.getResource("schema.graphqls");
@@ -36,9 +42,6 @@ public class GraphQLProvider {
         GraphQLSchema graphQLSchema = buildSchema(sdl);
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
     }
-
-    @Autowired
-    BigQueryDataFetchers bigQueryDataFetchers;
 
     private GraphQLSchema buildSchema(String sdl) {
         TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);

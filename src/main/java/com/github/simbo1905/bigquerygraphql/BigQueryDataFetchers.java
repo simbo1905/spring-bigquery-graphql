@@ -34,7 +34,10 @@ public class BigQueryDataFetchers {
     String authorByIdMapperCsv;
 
     /**
-     * Creates code to laod a BigQuery FieldValueList result into a map.
+     * Creates code to load a BigQuery FieldValueList result into a map.
+     * Regrettably FieldValueList is more like a map where it hides the names of the keys!
+     * So we use external config to name the fields in the queries and this logic to
+     * actually turn the result set into a map.
      * @param fieldsCsv The list of map keys with corresponding values in the oddly named FieldValueList
      * @return A function that can load specific query results into a map.
      */
@@ -51,10 +54,14 @@ public class BigQueryDataFetchers {
     public void logConfig() {
         log.info("bookByIdQuery: {}", bookByIdQuery);
         log.info("authorByIdQuery: {}", authorByIdQuery);
+        log.info("bookByIdMapperCsv: {}", bookByIdMapperCsv);
+        log.info("authorByIdMapperCsv: {}", authorByIdMapperCsv);
     }
 
     public DataFetcher getBookByIdDataFetcher() {
+        // we need a mapper for the query
         final Function<FieldValueList, Map<String, String>> bookMapper = mapperFor(this.bookByIdMapperCsv);
+        // return a lambda that runs the query and applies the mapper to get the result as a GraphQL friendly Map
         return dataFetchingEnvironment -> {
             String bookId = dataFetchingEnvironment.getArgument("id");
             Map<String, QueryParameterValue> parameterValueMap = new LinkedHashMap<>();
@@ -67,7 +74,9 @@ public class BigQueryDataFetchers {
     }
 
     public DataFetcher getAuthorDataFetcher() {
+        // we need a mapper for the query
         final Function<FieldValueList, Map<String, String>> authorMapper = mapperFor(this.authorByIdMapperCsv);
+        // return a lambda that runs the query and applies the mapper to get the result as a GraphQL friendly Map
         return dataFetchingEnvironment -> {
             Map<String, String> book = dataFetchingEnvironment.getSource();
             String authorId = book.get("authorId");

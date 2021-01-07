@@ -44,22 +44,19 @@ public class BigQueryRunner {
     public <T> List<T> queryAndWaitFor(final String query,
                                        Function<FieldValueList, T> mapper,
                                        Map<String, QueryParameterValue> parameterValueMap){
+        final long startTime = System.currentTimeMillis();
 
         val logParams = logParams(parameterValueMap);
-
         log.info("running query {} with  params: [{}]", query, logParams);
 
-        // TODO test without jobId as we will fail-fast and not reattempt
-        JobId jobId = JobId.of(UUID.randomUUID().toString());
+        // create the query
         QueryJobConfiguration queryJobConfiguration = QueryJobConfiguration.newBuilder(query)
                 .setUseLegacySql(false)
                 .setNamedParameters(parameterValueMap)
                 .build();
-        queryJobConfiguration.getLabels();
-        final long startTime = System.currentTimeMillis();
-        Job job = this.bigQuery.create(JobInfo.newBuilder(queryJobConfiguration).setJobId(jobId).build());
-        // block
-        job = job.waitFor();
+
+        // create and block on the job using waitFor()
+        Job job = this.bigQuery.create(JobInfo.newBuilder(queryJobConfiguration).build()).waitFor();
 
         // you probably want to use some other metrics/gauges to understand actual performance.
         final float duration = (System.currentTimeMillis() - startTime);
