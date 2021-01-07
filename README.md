@@ -30,7 +30,7 @@ Now create an instance that will run the code in the bucket:
 
 ```sh
 gcloud compute instances create demo-instance \
-    --image-family debian-9 \
+    --image-family debian-10 \
     --image-project debian-cloud \
     --machine-type g1-small \
     --scopes "userinfo-email,cloud-platform" \
