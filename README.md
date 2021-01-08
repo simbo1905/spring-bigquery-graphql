@@ -56,7 +56,7 @@ Next get the external IP:
 gcloud compute instances list
 ```
 
-Then use a GraphQL tool such as "GraphQL Playgournd" to look at:
+Then use a GraphQL tool such as "GraphQL Playground" to look at:
 
 ```sh
 http://$EXTERNAL_IP:8080/graphql
