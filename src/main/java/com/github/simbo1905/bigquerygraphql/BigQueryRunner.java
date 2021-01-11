@@ -121,12 +121,12 @@ public class BigQueryRunner {
         });
     }
 
-    public DataFetcher queryForOne(String query, String mappingCsv, String source, String dest) {
+    public DataFetcher queryForOne(String query, String mappingCsv, String sourceAttr, String destAttr) {
         // we need a mapper for the query. regrettably BigQuery doesn't let you know what is in a result you have to know
         final Function<FieldValueList, Map<String, String>> authorMapper = mapperFor(mappingCsv);
         // return a lambda that runs the query and applies the mapper to get the result as a GraphQL friendly Map
         return dataFetchingEnvironment -> {
-            Map<String, QueryParameterValue> parameterValueMap = resolveQueryParams(dataFetchingEnvironment, source, dest);
+            Map<String, QueryParameterValue> parameterValueMap = resolveQueryParams(dataFetchingEnvironment, sourceAttr, destAttr);
             return query(query, authorMapper, parameterValueMap)
                     .stream()
                     .findFirst()
