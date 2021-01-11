@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BigQueryGraphqlApplication {
+public class BigQueryGraphQLApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BigQueryGraphqlApplication.class, args);
+		SpringApplication.run(BigQueryGraphQLApplication.class, args);
 	}
 
 }

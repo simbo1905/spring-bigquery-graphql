@@ -9,6 +9,7 @@ import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,11 @@ public class GraphQLProvider {
 
     private GraphQL graphQL;
 
+    @Bean // require by host application
+    public GraphQL graphQL() {
+        return graphQL;
+    }
+
     @Autowired
     BigQueryDataFetchers bigQueryDataFetchers;
 
@@ -36,29 +42,14 @@ public class GraphQLProvider {
         this.graphQL = GraphQL.newGraphQL(graphQLSchema).build();
     }
 
-    private GraphQLSchema buildSchema(String sdl) {
+    GraphQLSchema buildSchema(String sdl) {
         TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
         RuntimeWiring runtimeWiring = buildWiring();
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
     }
 
-    private RuntimeWiring buildWiring() {
-        return RuntimeWiring.newRuntimeWiring()
-                .type(newTypeWiring("Query")
-                        .dataFetcher("bookById",
-                                bigQueryDataFetchers.queryForOne(
-                                        bigQueryDataFetchers.bookByIdQuery,
-                                        bigQueryDataFetchers.bookByIdMapperCsv,
-                                        "id",
-                                        "id")))
-                .type(newTypeWiring("Book")
-                        .dataFetcher("author",
-                                bigQueryDataFetchers.queryForOne(
-                                        bigQueryDataFetchers.authorByIdQuery,
-                                        bigQueryDataFetchers.authorByIdMapperCsv,
-                                        "authorId",
-                                        "id")))
-                .build();
+    RuntimeWiring buildWiring() {
+        return bigQueryDataFetchers.wire(RuntimeWiring.newRuntimeWiring());
     }
 }
