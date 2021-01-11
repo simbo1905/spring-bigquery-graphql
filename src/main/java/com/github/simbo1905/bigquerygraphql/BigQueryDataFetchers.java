@@ -49,8 +49,8 @@ public class BigQueryDataFetchers {
                                     bigQueryRunner.queryForOne(
                                             queryAndMapperCsv.sql,
                                             queryAndMapperCsv.mapperCsv,
-                                            queryAndMapperCsv.sourceAttr,
-                                            queryAndMapperCsv.destAttr)));
+                                            queryAndMapperCsv.gqlAttr,
+                                            queryAndMapperCsv.sqlParam)));
         }
 
         return wiring.build();
@@ -61,29 +61,32 @@ public class BigQueryDataFetchers {
         /**
          * Wiring typeName e.g. "Query", "Book"
          */
+
         String typeName;
         /**
          * Wiring fieldName e.g. "bookById", "author"
          */
+
         String fieldName;
         /**
          * The BigQuery query sql.
          */
         String sql;
+
         /**
          * The result set colums and BQ unfortunately does not supply this query result meta-data
          */
         String mapperCsv;
 
         /**
-         * The source attribute on the GraphQL side e.g., "authorId"
+         * The source parameter (if query) or attribute (if entity) on the GraphQL side e.g., "authorId"
          */
-        String sourceAttr;
+        String gqlAttr;
 
         /**
          * The destination attribute on the SQL side e.g., "id"
          */
-        String destAttr;
+        String sqlParam;
     }
 
 }

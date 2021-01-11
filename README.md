@@ -46,16 +46,16 @@ It uses a generic file to `wirings.json` to map GraphQL onto BigQuery SQL. If we
     "fieldName": "bookById",
     "sql":"select id,name,pageCount,authorId from demo_graphql_java.book where id=@id",
     "mapperCsv":"id,name,pageCount,authorId",
-    "sourceAttr": "id",
-    "destAttr": "id"
+    "gqlAttr": "id",
+    "sqlParam": "id"
   },
   {
     "typeName": "Book",
     "fieldName": "author",
     "sql":"select id,firstName,lastName from demo_graphql_java.author where id=@id",
     "mapperCsv":"id,firstName,lastName",
-    "sourceAttr": "authorId",
-    "destAttr": "id"
+    "gqlAttr": "authorId",
+    "sqlParam": "id"
   }
 ]
 ```
@@ -63,12 +63,12 @@ It uses a generic file to `wirings.json` to map GraphQL onto BigQuery SQL. If we
 That contains two wiring: 
 
  1. There is a field on `Query` called `bookById`:
-    * The graphql source parameter is `id`
+    * The graphql source parameter/attribute is `id` as we query as `bookById(id:"book-1")`
     * The sql query named parameter is also `id` as that is the identity column on the book table. 
     * The sql query is a simple select-by-id.
     * The list of fields returned by the query is named in `mapperCsv` as BigQuery won't tell us this fact.   
  2. There is a field on `Book` called `author`:
-    * The graphql source parameter is `authorId` as this is the name of the field on the `Book` entity.
+    * The graphql source parameter/attribute is `authorId` as this is the name of the attribute on the `Book` entity.
     * The sql query named parameter is `id` as that is also the identity column on the author table. 
     * The sql query is allso a simple select-by-id.
     * Once again the list of the fields returned by the query is supplied as BigQuery doesn't provide that. 

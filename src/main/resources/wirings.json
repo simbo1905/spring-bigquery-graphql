@@ -4,15 +4,15 @@
     "fieldName": "bookById",
     "sql":"select id,name,pageCount,authorId from demo_graphql_java.book where id=@id",
     "mapperCsv":"id,name,pageCount,authorId",
-    "sourceAttr": "id",
-    "destAttr": "id"
+    "gqlAttr": "id",
+    "sqlParam": "id"
   },
   {
     "typeName": "Book",
     "fieldName": "author",
     "sql":"select id,firstName,lastName from demo_graphql_java.author where id=@id",
     "mapperCsv":"id,firstName,lastName",
-    "sourceAttr": "authorId",
-    "destAttr": "id"
+    "gqlAttr": "authorId",
+    "sqlParam": "id"
   }
 ]
