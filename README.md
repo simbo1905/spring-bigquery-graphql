@@ -37,7 +37,11 @@ Then we get back:
 }
 ```
 
-It uses a generic file to `wirings.json` to map GraphQL onto BigQuery SQL. If we look in that file we have:
+This looks like: 
+
+![graphQL Playground](https://raw.githubusercontent.com/simbo1905/bigquery-graphql/master/graphql-bigquery.png)
+
+The codebase uses a generic file to `wirings.json` to map GraphQL onto BigQuery SQL. If we look in that file we have:
 
 ```json
 [
