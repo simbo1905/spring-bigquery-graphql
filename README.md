@@ -1,16 +1,93 @@
 
 # A Demo Of GraphQL-Java Over BigQuery
 
+This codebase is based on the tutorial [getting-started-with-spring-boot](https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/).
+
+Exactly like the original tutorial if we query with:
+
+```graphql
+{
+  bookById(id:"book-1"){
+    id
+    name
+    pageCount
+    author {
+      firstName
+      lastName
+    }
+  }
+}
+```
+
+Then we get back: 
+
+```json
+{
+  "data": {
+    "book1": {
+      "id": "book-1",
+      "name": "Harry Potter and the Philosopher's Stone",
+      "pageCount": 223,
+      "author": {
+        "firstName": "Joanne",
+        "lastName": "Rowling"
+      }
+    }
+  }
+}
+```
+
+It uses a generic file to `wirings.json` to map GraphQL onto BigQuery SQL. If we look in that file we have:
+
+```json
+[
+  {
+    "typeName": "Query",
+    "fieldName": "bookById",
+    "sql":"select id,name,pageCount,authorId from demo_graphql_java.book where id=@id",
+    "mapperCsv":"id,name,pageCount,authorId",
+    "sourceAttr": "id",
+    "destAttr": "id"
+  },
+  {
+    "typeName": "Book",
+    "fieldName": "author",
+    "sql":"select id,firstName,lastName from demo_graphql_java.author where id=@id",
+    "mapperCsv":"id,firstName,lastName",
+    "sourceAttr": "authorId",
+    "destAttr": "id"
+  }
+]
+```
+
+That contains two wiring: 
+
+ 1. There is a field on `Query` called `bookById`:
+    * The graphql source parameter is `id`
+    * The sql query named parameter is also `id` as that is the identity column on the book table. 
+    * The sql query is a simple select-by-id.
+    * The list of fields returned by the query is named in `mapperCsv` as BigQuery won't tell us this fact.   
+ 2. There is a field on `Book` called `author`:
+    * The graphql source parameter is `authorId` as this is the name of the field on the `Book` entity.
+    * The sql query named parameter is `id` as that is also the identity column on the author table. 
+    * The sql query is allso a simple select-by-id.
+    * Once again the list of the fields returned by the query is supplied as BigQuery doesn't provide that. 
+
+## TODO
+
+At the moment the code assumes that all SQL query parameters are strings. 
+It is left as an exercise to the reader to upgrade the code to deal with other types. 
+
 ## Setup
 
-On the google console: 
+On the Google Cloud console: 
 
  1. Create a dataset named `demo_graphql_java` see [here](https://cloud.google.com/bigquery/docs/datasets).
  2. Run `create_tables.sql` using the BigQuery console. 
 
 The following instructions are based on [this tutorial](https://cloud.google.com/community/tutorials/kotlin-springboot-compute-engine) if you have any issue look at that tutorial: 
 
-We will use a bucket name that matches our project name:
+Use your own project name not mine here. I used a bucket name that matches the project name:
 
 ```sh
 export YOUR_PROJECT=capable-conduit-300818
