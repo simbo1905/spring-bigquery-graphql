@@ -41,9 +41,9 @@ public class BigQueryRunner {
     }
 
     @SneakyThrows
-    public <T> List<T> queryAndWaitFor(final String query,
-                                       Function<FieldValueList, T> mapper,
-                                       Map<String, QueryParameterValue> parameterValueMap){
+    public <T> List<T> query(final String query,
+                             Function<FieldValueList, T> mapper,
+                             Map<String, QueryParameterValue> parameterValueMap){
         final long startTime = System.currentTimeMillis();
 
         val logParams = logParams(parameterValueMap);
