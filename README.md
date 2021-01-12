@@ -256,3 +256,9 @@ git add charts/*
 git commit -am 'charts update'
 git pull && git push
 ```
+
+Now you can use the declarative helmfile.yaml to update all the services with: 
+
+```sh
+helmfile sync
+```
