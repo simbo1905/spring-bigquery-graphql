@@ -23,6 +23,7 @@
 		<guava.version>29.0-jre</guava.version>
 		<lombok.version>1.18.16</lombok.version>
 		<bigquery.version>1.126.3</bigquery.version>
+		<spring-cloud-gcp.version>1.2.6.RELEASE</spring-cloud-gcp.version>
 		<dockerhub.username>simonmassey</dockerhub.username>
 	</properties>
 
@@ -72,6 +73,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-gcp-starter-logging</artifactId>
+			<version>${spring-cloud-gcp.version}</version>
 		</dependency>
 
 	</dependencies>
