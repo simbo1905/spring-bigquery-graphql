@@ -14,6 +14,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    environment: bigquery-graphql
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.11
