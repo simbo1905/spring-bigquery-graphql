@@ -37,11 +37,39 @@ Then we get back:
 }
 ```
 
-This looks like: 
+You can run GraphQL Playbround to this out which looks like this: 
 
-![graphQL Playground](https://raw.githubusercontent.com/simbo1905/bigquery-graphql/master/graphql-bigquery.png)
+![GraphQL Playground](https://raw.githubusercontent.com/simbo1905/bigquery-graphql/master/graphql-bigquery.png)
 
-The codebase uses a generic file to `wirings.json` to map GraphQL onto BigQuery SQL. If we look in that file we have:
+The GraphQL scheme is:
+
+```graphql
+type Query {
+    bookById(id: ID): Book
+}
+
+type Book {
+    id: ID
+    name: String
+    pageCount: Int
+    author: Author
+}
+
+type Author {
+    id: ID
+    firstName: String
+    lastName: String
+}
+```
+
+The matching BigQuery schema is:
+
+```sql
+create table demo_graphql_java.book ( id string, name string, pageCount string, authorId string ); 
+create table demo_graphql_java.author ( id string, firstName string, lastName string );  
+```
+
+This codebase uses a generic file to `wirings.json` to map GraphQL onto BigQuery SQL. If we look in that file we have:
 
 ```json
 [
@@ -66,25 +94,32 @@ The codebase uses a generic file to `wirings.json` to map GraphQL onto BigQuery 
 
 That contains two wiring: 
 
- 1. There is a field on `Query` called `bookById`:
-    * The graphql source parameter/attribute is `id` as we query as `bookById(id:"book-1")`
+ 1. There is a field on `Query` called `bookById` which fines our top level query:
+    * The graphql source parameter/attribute is `id` as we can query by e.g., `bookById(id:"book-1")`
     * The sql query named parameter is also `id` as that is the identity column on the book table. 
-    * The sql query is a simple select-by-id.
-    * The list of fields returned by the query is named in `mapperCsv` as BigQuery won't tell us this fact.   
- 2. There is a field on `Book` called `author`:
-    * The graphql source parameter/attribute is `authorId` as this is the name of the attribute on the `Book` entity.
-    * The sql query named parameter is `id` as that is also the identity column on the author table. 
-    * The sql query is allso a simple select-by-id.
-    * Once again the list of the fields returned by the query is supplied as BigQuery doesn't provide that. 
+    * The sql query is a simple select-by-id that uses the sql param i.e., `where id=@id`
+    * The list of fields returned by the query is named in `mapperCsv`. We have to pass this as BigQuery won't tell us this fact unlike a standard JDBC ResultSet :cry:.
+ 2. There is a field on `Book` called `author` which requires querying the author table based on the `authorId` of the book:
+    * The graphql source parameter/attribute is `authorId` as this is the name of the attribute on the `Book` entity as loaded from BigQuery.
+    * The sql query named parameter is `id` as that is also the column name of the identity column on the author table.
+    * The sql query is also a simple select-by-id using `where id=@id`
+    * Once again the list of the fields returned by the query is supplied as BigQuery doesn't provide that :cry:.
 
 ## TODO Development
 
 At the moment the code assumes that all SQL query parameters are strings. 
 It is left as an exercise to the reader to upgrade the code to deal with other types. 
 
+## BigQuery Setup
+
+On the Google Cloud console: 
+
+ 1. Create a dataset named `demo_graphql_java` see [here](https://cloud.google.com/bigquery/docs/datasets).
+ 2. Run `create_tables.sql` using the BigQuery console. 
+
 ## Running Under Docker
 
-First create the tables as described later in this README. 
+First create the tables in a dataset `demo_graphql_java` as described above.
 
 Create a service account `bigquery-graphql` then grant it the bigquery user role:
 
@@ -94,9 +129,9 @@ gcloud projects add-iam-policy-binding ${YOUR_PROJECT} \
   --role='roles/bigquery.user'
 ```
 
-Grant the service account read to the two tables using these instructions: 
+Grant the service account read to the two tables using these instructions [bigquery/docs/table-access-controls](https://cloud.google.com/bigquery/docs/table-access-controls#bq). 
 
-[bigquery/docs/table-access-controls](https://cloud.google.com/bigquery/docs/table-access-controls#bq). In my case:
+In *my* case I did something lik this. YMMV you need to change the identifiers to match your project/sa:
 
 ```sh
 $ cat policy.json
@@ -114,7 +149,7 @@ $ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
 $ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
 ```
 
-Create a JSON keyfile for the service account and save it in the current directory. Then 
+On the console create a JSON keyfile for the service account and save it in the current directory. Then 
 run Docker passing in access to that keyfile: 
 
 ```sh
@@ -124,12 +159,7 @@ docker run -it \
   -p 8080:8080 simonmassey/bigquery-graphql:latest
 ```
 
-## Setup
-
-On the Google Cloud console: 
-
- 1. Create a dataset named `demo_graphql_java` see [here](https://cloud.google.com/bigquery/docs/datasets).
- 2. Run `create_tables.sql` using the BigQuery console. 
+## Run In Cloud On VM
 
 The following instructions are based on [this tutorial](https://cloud.google.com/community/tutorials/kotlin-springboot-compute-engine) if you have any issue look at that tutorial: 
 
@@ -179,27 +209,10 @@ Next get the external IP:
 gcloud compute instances list
 ```
 
-Then use a GraphQL tool such as "GraphQL Playground" to look at:
+Then use a GraphQL tool such as "GraphQL Playground" to look query:
 
 ```sh
 http://$EXTERNAL_IP:8080/graphql
-```
-
-You can run a GraphQL query such as:
-
-```
-# Write your query or mutation here
-{
-  bookById(id:"book-1"){
-    id
-    name
-    pageCount
-    author {
-      firstName
-      lastName
-    }
-  }
-}
 ```
 
 ## Docker Release Via GitHub Actions
