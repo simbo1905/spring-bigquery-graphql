@@ -246,3 +246,13 @@ Grab the latest helm and put it on your path. Then install the KNative service w
 helm install bigquery-graphql ./bigquery-graphql
 ```
 
+Better yet use [github pages](https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/creating-a-github-pages-site) and create a chart repo: 
+
+```sh
+helm package bigquery-graphql
+mv bigquery-graphql-1.0.4.tgz charts/
+helm repo index charts --url https://${YOUR_ORG}.github.io/bigquery-graphql/charts
+git add charts/*
+git commit -am 'charts update'
+git pull && git push
+```

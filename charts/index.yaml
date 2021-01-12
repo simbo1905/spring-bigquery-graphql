@@ -3,7 +3,17 @@ entries:
   bigquery-graphql:
   - apiVersion: v2
     appVersion: 1.0.4
-    created: "2021-01-12T20:01:19.503418Z"
+    created: "2021-01-12T20:21:51.822104Z"
+    description: Demo of running GraphQL over BigQuery
+    digest: 6897cd1efec56c9d48d7e8d58f565f7890731af8efcc8c00c0d21c95692b7b4b
+    name: bigquery-graphql
+    type: application
+    urls:
+    - https://simbo1905.github.io/bigquery-graphql/charts/bigquery-graphql-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
+    appVersion: 1.0.4
+    created: "2021-01-12T20:21:51.821474Z"
     description: Demo of running GraphQL over BigQuery
     digest: 35996d1b9c593265aa5c45d1971bc779a85e54734861555c6d8fd8ca4b36cd13
     name: bigquery-graphql
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://simbo1905.github.io/bigquery-graphql/charts/bigquery-graphql-0.1.0.tgz
     version: 0.1.0
-generated: "2021-01-12T20:01:19.502956Z"
+generated: "2021-01-12T20:21:51.820145Z"
