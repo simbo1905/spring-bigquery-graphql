@@ -77,10 +77,52 @@ That contains two wiring:
     * The sql query is allso a simple select-by-id.
     * Once again the list of the fields returned by the query is supplied as BigQuery doesn't provide that. 
 
-## TODO
+## TODO Development
 
 At the moment the code assumes that all SQL query parameters are strings. 
 It is left as an exercise to the reader to upgrade the code to deal with other types. 
+
+## Running Under Docker
+
+First create the tables as described later in this README. 
+
+Create a service account `bigquery-graphql` then grant it the bigquery user role:
+
+```sh
+gcloud projects add-iam-policy-binding ${YOUR_PROJECT} \
+  --member='serviceAccount:bigquery-graphql@${YOUR_PROJECT}.iam.gserviceaccount.com' \
+  --role='roles/bigquery.user'
+```
+
+Grant the service account read to the two tables using these instructions: 
+
+[bigquery/docs/table-access-controls](https://cloud.google.com/bigquery/docs/table-access-controls#bq). In my case:
+
+```sh
+$ cat policy.json
+{
+"bindings": [
+ {
+   "members": [
+     "serviceAccount:bigquery-graphql@capable-conduit-300818.iam.gserviceaccount.com"
+   ],
+   "role": "roles/bigquery.dataViewer"
+ }
+]
+}
+$ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
+$ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
+```
+
+Create a JSON keyfile for the service account and save it in the current directory. Then 
+run Docker passing in access to that keyfile: 
+
+```sh
+docker run -it \
+  --volume $(pwd):/home/project \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/home/project/${KEYFILE} \
+  -p 8080:8080 simonmassey/bigquery-graphql:latest
+```
 
 ## Setup
 
