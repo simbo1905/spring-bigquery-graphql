@@ -159,3 +159,7 @@ You can run a GraphQL query such as:
   }
 }
 ```
+
+## Docker Release Via GitHub Actions
+
+Is done as per https://gist.github.com/faph/20331648cdc0b492eba0f4d83f69eaa5
