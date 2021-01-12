@@ -1,0 +1,37 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{ .Values.name | quote }}
+  namespace: {{ .Values.namespace | quote }}
+spec:
+  template:
+    spec:
+      containers:
+        - image: "{{ .Values.image }}:{{ .Values.tag }}"
+
+          env:
+            # This directs the Google Cloud SDK to use the identity and project
+            # defined by the Service Account (aka robot) in the JSON file at
+            # this path.
+            #  - `/var/secret` is determined by the `volumeMounts[0].mountPath`
+            #   below. This can be changed if both places are changed.
+            #  - `robot.json` is determined by the "key" that is used to hold the
+            #   secret content in the Kubernetes secret.  This can be changed
+            #   if both places are changed.
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secret/bigquery-sa.json
+            - name: hello
+              value: world2
+
+          # This section specified where in the container we want the
+          # volume containing our secret to be mounted.
+          volumeMounts:
+            - name: graphql-bigquery-secret
+              mountPath: /var/secret
+
+      # This section attaches the secret "graphql-bigquery-secret" to
+      # the Pod holding the user container.
+      volumes:
+        - name: graphql-bigquery-secret
+          secret:
+            secretName: graphql-bigquery-secret

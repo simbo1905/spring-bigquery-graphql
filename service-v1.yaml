@@ -1,0 +1,48 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: helloworld
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: docker.io/simonmassey/bigquery-graphql:1.0.4
+
+          env:
+            # This directs the Google Cloud SDK to use the identity and project
+            # defined by the Service Account (aka robot) in the JSON file at
+            # this path.
+            #  - `/var/secret` is determined by the `volumeMounts[0].mountPath`
+            #   below. This can be changed if both places are changed.
+            #  - `robot.json` is determined by the "key" that is used to hold the
+            #   secret content in the Kubernetes secret.  This can be changed
+            #   if both places are changed.
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/secret/bigquery-sa.json
+
+          # This section specified where in the container we want the
+          # volume containing our secret to be mounted.
+          volumeMounts:
+            - name: graphql-bigquery-secret
+              mountPath: /var/secret
+
+      # This section attaches the secret "graphql-bigquery-secret" to
+      # the Pod holding the user container.
+      volumes:
+        - name: graphql-bigquery-secret
+          secret:
+            secretName: graphql-bigquery-secret

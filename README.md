@@ -149,13 +149,13 @@ $ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
 $ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
 ```
 
-On the console create a JSON keyfile for the service account and save it in the current directory. Then 
-run Docker passing in access to that keyfile: 
+On the console create a JSON keyfile for the service account and save it in the current directory. 
+Save the file name as "bigquery-sa.json". Then run Docker passing in access to that keyfile: 
 
 ```sh
 docker run -it \
   --volume $(pwd):/home/project \
-  -e GOOGLE_APPLICATION_CREDENTIALS=/home/project/${KEYFILE} \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/home/project/bigquery-sa.json \
   -p 8080:8080 simonmassey/bigquery-graphql:latest
 ```
 
@@ -218,3 +218,31 @@ http://$EXTERNAL_IP:8080/graphql
 ## Docker Release Via GitHub Actions
 
 Is done as per https://gist.github.com/faph/20331648cdc0b492eba0f4d83f69eaa5
+
+## Run On KNative
+
+Do the first helloworld deployment from the video [Serverless with Knative - Mete Atamel](https://www.youtube.com/watch?v=HiIJqMqFbC0).
+**Note** The latest setup material is at [https://github.com/meteatamel/knative-tutorial/tree/master/setup](https://github.com/meteatamel/knative-tutorial/tree/master/setup) and you *only* need to setup Knative Serving and not anything else. 
+
+We need to create a secret containing your service account token. 
+
+Using [these instructions](https://knative.dev/docs/serving/samples/secrets-go/) I found that this worked:
+
+```sh
+kubectl create secret generic graphql-bigquery --from-file=bigquery-sa.json
+```
+
+The secret is referenced in service-v1.yaml which is the knative service you can install with: 
+
+```sh
+kubectl apply -f service-v1.yaml
+```
+
+## Manage KNative via Helm
+
+Grab the latest helm and put it on your path. Then install the KNative service with: 
+
+```sh
+helm install bigquery-graphql ./bigquery-graphql
+```
+
