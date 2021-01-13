@@ -1,5 +1,5 @@
 
-# A Demo Of GraphQL-Java Over BigQuery
+# A Demo Of GraphQL-Java Over BigQuery deployed onto KNative on GKE
 
 This codebase is based on the tutorial [getting-started-with-spring-boot](https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/).
 
