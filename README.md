@@ -203,6 +203,12 @@ Grab the latest helm and put it on your path. Then install the KNative service w
 helm install bigquery-graphql ./bigquery-graphql
 ```
 
+You can uninstalll it with: 
+
+```sh
+helm uninstall bigquery-graphql
+```
+
 Better yet use [github pages](https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/creating-a-github-pages-site) and create a chart repo: 
 
 ```sh
