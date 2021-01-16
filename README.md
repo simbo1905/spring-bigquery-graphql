@@ -161,7 +161,7 @@ docker run -it \
 
 ## Docker Release Via GitHub Actions
 
-Is done as per https://gist.github.com/faph/20331648cdc0b492eba0f4d83f69eaa5
+Is done as per https://gist.github.com/simbo1905/495400fb708fdc91b75ce9b1bc4666cc
 
 ## Run On KNative
 
