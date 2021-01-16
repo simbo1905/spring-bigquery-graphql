@@ -182,6 +182,19 @@ The secret is referenced in service-v1.yaml which is the knative service you can
 kubectl apply -f service-v1.yaml
 ```
 
+You can look what is going on with
+
+```sh
+watch -n 1 kubectl get pods,ksvc,configuration,revision,route
+```
+
+You can list and delete with:
+
+```sh
+kn service list
+kn service delete $SVC
+```
+
 ## Manage KNative via Helm
 
 Grab the latest helm and put it on your path. Then install the KNative service with: 
