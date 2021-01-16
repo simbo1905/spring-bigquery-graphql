@@ -37,7 +37,7 @@ Then we get back:
 }
 ```
 
-You can run GraphQL Playbround to this out which looks like this: 
+You can run GraphQL Playbround to try this out: 
 
 ![GraphQL Playground](https://raw.githubusercontent.com/simbo1905/bigquery-graphql/master/graphql-bigquery.png)
 
@@ -145,7 +145,7 @@ $ cat policy.json
  }
 ]
 }
-$ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
+$ bq set-iam-policy capable-conduit-300818:demo_graphql_java.book policy.json
 $ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
 ```
 
