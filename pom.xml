@@ -9,12 +9,12 @@
 	</parent>
 	<groupId>com.github.simbo1905</groupId>
 	<artifactId>bigquery-graphql</artifactId>
-	<version>1.0.15-SNAPSHOT</version>
+	<version>1.0.15</version>
 	<name>bigquery-graphql</name>
 	<description>Demo of running GraphQL over BigQuery </description>
 	<scm>
 		<developerConnection>scm:git:https://github.com/simbo1905/${project.artifactId}</developerConnection>
-		<tag>HEAD</tag>
+		<tag>bigquery-graphql-1.0.15</tag>
 	</scm>
 	<properties>
 		<java.version>11</java.version>
