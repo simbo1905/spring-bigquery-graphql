@@ -20,8 +20,8 @@ spec:
             #   if both places are changed.
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /var/secret/bigquery-sa.json
-            - name: hello
-              value: world2
+            - name: spring_profiles_active
+              value: {{ .Values.spring_profiles_active | quote }}
 
           # This section specified where in the container we want the
           # volume containing our secret to be mounted.
