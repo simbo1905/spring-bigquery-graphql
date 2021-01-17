@@ -22,7 +22,7 @@ public class BigQueryRunner {
     BigQuery bigQuery = null;
 
     @Value("${gcp.project")
-    String projectId;
+    String projectId = "capable-conduit-300818";
 
     @Value("${gcp.bigquery.log.thresholdms}")
     long logThresholdMs = 1000;

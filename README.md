@@ -117,21 +117,19 @@ On the Google Cloud console:
  1. Create a dataset named `demo_graphql_java` see [here](https://cloud.google.com/bigquery/docs/datasets).
  2. Run `create_tables.sql` using the BigQuery console. 
 
-## Running Under Docker
-
 First create the tables in a dataset `demo_graphql_java` as described above.
 
 Create a service account `bigquery-graphql` then grant it the bigquery user role:
 
 ```sh
 gcloud projects add-iam-policy-binding ${YOUR_PROJECT} \
-  --member='serviceAccount:bigquery-graphql@${YOUR_PROJECT}.iam.gserviceaccount.com' \
-  --role='roles/bigquery.user'
+  --member="serviceAccount:bigquery-graphql@${YOUR_PROJECT}.iam.gserviceaccount.com" \
+  --role="roles/bigquery.user"
 ```
 
-Grant the service account read to the two tables using these instructions [bigquery/docs/table-access-controls](https://cloud.google.com/bigquery/docs/table-access-controls#bq). 
+Grant the service account read to the two tables using these instructions [bigquery/docs/table-access-controls](https://cloud.google.com/bigquery/docs/table-access-controls#bq).
 
-In *my* case I did something lik this. YMMV you need to change the identifiers to match your project/sa:
+In *my* case I did something like this. YMMV you need to change the identifiers to match your project/sa:
 
 ```sh
 $ cat policy.json
@@ -149,8 +147,26 @@ $ bq set-iam-policy capable-conduit-300818:demo_graphql_java.book policy.json
 $ bq set-iam-policy capable-conduit-300818:demo_graphql_java.author policy.json
 ```
 
-On the console create a JSON keyfile for the service account and save it in the current directory. 
-Save the file name as "bigquery-sa.json". Then run Docker passing in access to that keyfile: 
+On the console create a JSON keyfile for the service account and save it in the current directory.
+Save the file name as "bigquery-sa.json".
+
+## Running IntelliJ
+
+You need to run the BigQueryGraphQLApplication then edit the config to:
+
+  1. Pass `--logging.config=./src/main/resources/logback-local.xml` on the commandline
+  2. Set and Environment Variable `GOOGLE_APPLICATION_CREDENTIALS=bigquery-sa.json` where that is a json keyfile for a 
+     valid service acccount with the valid permissions. 
+
+## Running Under Docker
+
+Use maven to build the docker image (you will have to change the pom.xml to user your hub.docker.com username):
+
+```shell
+mvn package
+```
+
+Then run Docker passing in access to that keyfile: 
 
 ```sh
 docker run -it \
