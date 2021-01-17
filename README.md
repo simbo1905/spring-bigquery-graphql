@@ -181,12 +181,12 @@ Is done as per https://gist.github.com/simbo1905/495400fb708fdc91b75ce9b1bc4666c
 
 ## Run On KNative
 
-Do the first helloworld deployment from the video [Serverless with Knative - Mete Atamel](https://www.youtube.com/watch?v=HiIJqMqFbC0).
-**Note** The latest setup material is at [https://github.com/meteatamel/knative-tutorial/tree/master/setup](https://github.com/meteatamel/knative-tutorial/tree/master/setup) and you *only* need to setup Knative Serving and not anything else. 
+Do the first helloworld deployment where an early version is shown in the video [Serverless with Knative - Mete Atamel](https://www.youtube.com/watch?v=HiIJqMqFbC0).
+**Note** Use the latest actual set up docs and scripts at [https://github.com/meteatamel/knative-tutorial/tree/master/setup](https://github.com/meteatamel/knative-tutorial/tree/master/setup) 
+and you *only* need to setup Knative Serving and not anything else. 
 
-We need to create a secret containing your service account token. 
-
-Using [these instructions](https://knative.dev/docs/serving/samples/secrets-go/) I found that this worked:
+We need to create a secret containing your service account token. Using [these instructions](https://knative.dev/docs/serving/samples/secrets-go/) 
+I found that this worked:
 
 ```sh
 kubectl create secret generic graphql-bigquery --from-file=bigquery-sa.json
@@ -198,7 +198,7 @@ The secret is referenced in service-v1.yaml which is the knative service you can
 kubectl apply -f service-v1.yaml
 ```
 
-You can look what is going on with
+You can `watch` all the config being deployed using:
 
 ```sh
 watch -n 1 kubectl get pods,ksvc,configuration,revision,route
@@ -219,7 +219,7 @@ Grab the latest helm and put it on your path. Then install the KNative service w
 helm install bigquery-graphql ./bigquery-graphql
 ```
 
-You can uninstalll it with: 
+You can uninstall it with: 
 
 ```sh
 helm uninstall bigquery-graphql
@@ -236,7 +236,7 @@ git commit -am 'charts update'
 git pull && git push
 ```
 
-Now you can use the declarative helmfile.yaml to update all the services with: 
+Now you can use the declarative `helmfile.yaml` to update all the services with: 
 
 ```sh
 helmfile sync
