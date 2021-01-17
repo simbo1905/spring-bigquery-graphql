@@ -3,6 +3,8 @@
 
 This codebase is based on the tutorial [getting-started-with-spring-boot](https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/).
 
+This codebase uses a TTL Guava cache to cache the entities returned from BigTable. 
+
 Exactly like the original tutorial if we query with:
 
 ```graphql
@@ -44,15 +46,17 @@ You can run GraphQL Playbround to try this out:
 The GraphQL scheme is:
 
 ```graphql
+directive @cache(ms : Int!) on FIELD_DEFINITION
+
 type Query {
-    bookById(id: ID): Book
+    bookById(id: ID): Book @cache(ms: 15000)
 }
 
 type Book {
     id: ID
     name: String
     pageCount: Int
-    author: Author
+    author: Author @cache(ms: 15000)
 }
 
 type Author {
@@ -61,6 +65,9 @@ type Author {
     lastName: String
 }
 ```
+
+The `@cache` directive causes the BigQuery query-by-id results to be cached in a per field in-memory cache 
+with a TTL of the specified number of milliseconds. 
 
 The matching BigQuery schema is:
 
@@ -108,7 +115,8 @@ That contains two wiring:
 ## TODO Development
 
 At the moment the code assumes that all SQL query parameters are strings. 
-It is left as an exercise to the reader to upgrade the code to deal with other types. 
+At the moment the code assumes that all SQL queries are by an attribute named `id`. 
+It is left as an exercise to the reader to upgrade the code to deal with other types and parameter names. 
 
 ## BigQuery Setup
 
@@ -157,7 +165,7 @@ You need to run the BigQueryGraphQLApplication then edit the config to:
   1. Set and Environment Variable `GOOGLE_APPLICATION_CREDENTIALS=bigquery-sa.json` where that is a json keyfile for a 
      valid service acccount with the valid permissions. 
 
-## Running Under Docker
+## Running In Docker
 
 Use maven to build the docker image (you will have to change the pom.xml to user your hub.docker.com username):
 
@@ -210,7 +218,7 @@ kn service list
 kn service delete $SVC
 ```
 
-## Manage KNative via Helm
+## Manage KNative via Helm and Helmfile
 
 Grab the latest helm and put it on your path. Then install the KNative service with: 
 
@@ -244,4 +252,4 @@ helmfile sync
 Note that my helmfile.yaml sets the env var `spring_profiles_active: gcp` to enable 
 stackdrive logging. If you are not running on Google Cloud Platform with stackdriver
 logging enabled that will give errors. You can disable it by setting the profile to be 
-default else empty. 
+`default`. 

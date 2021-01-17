@@ -45,8 +45,6 @@ public class BigQueryRunner {
                              Map<String, QueryParameterValue> parameterValueMap){
         final long startTime = System.currentTimeMillis();
 
-        val logParams = logParams(parameterValueMap);
-        log.info("running query {} with  params: [{}]", query, logParams);
 
         // create the query
         QueryJobConfiguration queryJobConfiguration = QueryJobConfiguration.newBuilder(query)
@@ -59,8 +57,12 @@ public class BigQueryRunner {
 
         // you probably want to use some other metrics/gauges to understand actual performance.
         final float duration = (System.currentTimeMillis() - startTime);
+
+        val logParams = logParams(parameterValueMap);
         if( duration > logThresholdMs ) {
             log.warn("slow query ran in {} ms: {}, params: [{}]", Math.round(duration), query, logParams  );
+        } else {
+            log.info("query ran in {} ms: {}, params: [{}]", Math.round(duration), query, logParams  );
         }
 
         // map the results into the desired DTO
