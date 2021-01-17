@@ -154,8 +154,7 @@ Save the file name as "bigquery-sa.json".
 
 You need to run the BigQueryGraphQLApplication then edit the config to:
 
-  1. Pass `--logging.config=./src/main/resources/logback-local.xml` on the commandline
-  2. Set and Environment Variable `GOOGLE_APPLICATION_CREDENTIALS=bigquery-sa.json` where that is a json keyfile for a 
+  1. Set and Environment Variable `GOOGLE_APPLICATION_CREDENTIALS=bigquery-sa.json` where that is a json keyfile for a 
      valid service acccount with the valid permissions. 
 
 ## Running Under Docker
@@ -241,3 +240,8 @@ Now you can use the declarative `helmfile.yaml` to update all the services with:
 ```sh
 helmfile sync
 ```
+
+Note that my helmfile.yaml sets the env var `spring_profiles_active: gcp` to enable 
+stackdrive logging. If you are not running on Google Cloud Platform with stackdriver
+logging enabled that will give errors. You can disable it by setting the profile to be 
+default else empty. 
