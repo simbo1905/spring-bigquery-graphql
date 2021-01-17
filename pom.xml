@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.github.simbo1905</groupId>
 	<artifactId>bigquery-graphql</artifactId>
-	<version>1.0.14-SNAPSHOT</version>
+	<version>1.0.15-SNAPSHOT</version>
 	<name>bigquery-graphql</name>
 	<description>Demo of running GraphQL over BigQuery </description>
 	<scm>
