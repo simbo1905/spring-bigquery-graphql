@@ -3,6 +3,9 @@
 
 This codebase is based on the tutorial [getting-started-with-spring-boot](https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/).
 
+Note: You probably want to use the Quarkus version of this codebase which is at 
+[simbo1905/quarkus-graphql-bigquery](https://github.com/simbo1905/quarkus-graphql-bigquery)
+
 This codebase uses a TTL Guava cache to cache the entities returned from BigTable. 
 
 Exactly like the original tutorial if we query with:

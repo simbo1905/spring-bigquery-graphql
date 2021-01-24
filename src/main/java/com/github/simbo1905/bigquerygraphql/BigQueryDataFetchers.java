@@ -22,8 +22,9 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static graphql.schema.idl.TypeRuntimeWiring.newTypeWiring;
 
@@ -58,13 +59,17 @@ public class BigQueryDataFetchers {
                 final DataFetcher uncachedDataFetcher = environment.getCodeRegistry().getDataFetcher(parentType, field);
 
                 // return a wrapper that uses the cache for this field
-                DataFetcher cachedDataFetcher = (e) -> {
-                    val id = Objects.toString(e.getArgument("id"));
-                    var value = cache.getIfPresent(Objects.toString(id));
+                DataFetcher cachedDataFetcher = (env) -> {
+                    // sort the arguments map and turn it into a string that can be used as a cache key
+                    val argMapSortedByKey = new TreeMap<>(env.getArguments());
+                    val cacheKey= argMapSortedByKey.entrySet().stream()
+                            .map(e->e.getKey()+"="+e.getValue().toString())
+                            .collect(Collectors.joining(","));
+                    var value = cache.getIfPresent(cacheKey);
                     if( value == null ){
-                        value = (Map<String, String>) uncachedDataFetcher.get(e);
+                        value = (Map<String, String>) uncachedDataFetcher.get(env);
                         if( value != null )
-                            cache.put(id, value);
+                            cache.put(cacheKey, value);
                     }
                     return value;
                 };
