@@ -4,7 +4,9 @@
 This codebase is based on the tutorial [getting-started-with-spring-boot](https://www.graphql-java.com/tutorials/getting-started-with-spring-boot/).
 
 Note: You probably want to use the Quarkus version of this codebase which is at 
-[simbo1905/quarkus-graphql-bigquery](https://github.com/simbo1905/quarkus-graphql-bigquery)
+[simbo1905/quarkus-graphql-bigquery](https://github.com/simbo1905/quarkus-graphql-bigquery). That 
+version of the code is none blocking whereas this version of the code blocks on BigQuery 
+which will harm scalability. 
 
 This codebase uses a TTL Guava cache to cache the entities returned from BigTable. 
 
