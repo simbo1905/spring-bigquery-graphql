@@ -9,10 +9,18 @@ on:
   pull_request:
     branches: [ master ]
 
+# Serialise, never cancel: this workflow's push trigger IS the release path
+# (mvn release:prepare pushes a tag + commits, release:perform deploys).
+# A superseded push must wait, not kill a half-published release.
+concurrency:
+  group: maven-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     environment: bigquery-graphql
 
